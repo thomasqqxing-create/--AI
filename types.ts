@@ -2,6 +2,7 @@ export enum Category {
   CHAT = 'AI 对话',
   IMAGE = 'AI 绘画',
   VIDEO = 'AI 视频',
+  PROGRAM = '程序广场',
   ECOMMERCE = 'AI 电商',
   EDITING = 'AI 修图',
   MUSIC = 'AI 音乐',

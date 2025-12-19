@@ -7,21 +7,16 @@ interface UpgradeModalProps {
 }
 
 const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
-  // Default select the 'month' plan (which is usually recommended)
   const [selectedPlanId, setSelectedPlanId] = useState<string>('month');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       ></div>
 
-      {/* Modal Content */}
       <div className="relative bg-[#18181b] border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 fade-in duration-300">
-        
-        {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-[#18181b]/95 backdrop-blur-md border-b border-white/5">
           <div className="flex items-center gap-2">
              <div className="p-2 rounded-xl bg-gradient-to-tr from-yellow-400 to-orange-500 text-black">
@@ -40,11 +35,9 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8">
             {PRICING_PLANS.map((plan) => {
                const isSelected = selectedPlanId === plan.id;
-               
                return (
                  <div 
                    key={plan.id} 
@@ -55,7 +48,6 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
                        : 'bg-transparent border-white/10 hover:border-white/20 hover:bg-white/5'
                    }`}
                  >
-                     {/* Recommended Badge (Static) */}
                      {plan.recommend && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg">
                           Most Popular
@@ -92,7 +84,6 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
             })}
         </div>
 
-        {/* Footer Payment Methods */}
         <div className="p-6 bg-black/20 border-t border-white/5 flex flex-col items-center gap-4">
              <p className="text-xs text-gray-500">支持的支付方式</p>
              <div className="flex gap-4 opacity-70 grayscale hover:grayscale-0 transition-all">
@@ -103,9 +94,6 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
                     WeChat 微信
                  </div>
              </div>
-             <p className="text-[10px] text-gray-600 mt-2">
-                 订阅即表示您同意我们的 <span className="underline cursor-pointer hover:text-gray-400">服务条款</span> 和 <span className="underline cursor-pointer hover:text-gray-400">隐私政策</span>
-             </p>
         </div>
       </div>
     </div>

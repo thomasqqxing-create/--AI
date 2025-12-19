@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { Message } from "../types";
 
@@ -7,6 +8,7 @@ const getClient = () => {
   if (!apiKey) {
     throw new Error("API Key not found in environment.");
   }
+  // Initialize with named parameter as required by the library
   return new GoogleGenAI({ apiKey });
 };
 
@@ -19,19 +21,25 @@ export const generateText = async (
   try {
     const ai = getClient();
     
-    // Construct contents from history + current prompt
-    // Ideally we would pass full history, but for this demo we focus on the last prompt 
-    // or simple concatenation to keep state management simple in the UI.
-    // In a production app, map Message[] to the Content format expected by SDK.
+    // Construct contents from history + current prompt for conversational context
+    const contents = [
+      ...history.map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      })),
+      { role: 'user', parts: [{ text: prompt }] }
+    ];
     
+    // Call generateContent with model name and contents
     const response = await ai.models.generateContent({
       model: modelId,
-      contents: prompt, // Simplified for this demo
+      contents,
       config: {
         systemInstruction: systemInstruction,
       }
     });
 
+    // Directly access the .text property (not a method call)
     return response.text || "No response text generated.";
   } catch (error) {
     console.error("Gemini Text Generation Error:", error);
@@ -46,18 +54,29 @@ export const generateImage = async (
   try {
     const ai = getClient();
     
-    // Using generateContent for nano banana series (standard flash image)
+    // Using generateContent for image generation as per SDK guidelines for nano banana models
     const response = await ai.models.generateContent({
       model: modelId,
       contents: {
         parts: [{ text: prompt }]
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: "1:1"
+        }
       }
     });
 
-    // Extract image
-    for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
+    // Iterate through response parts to find the generated image
+    const candidates = response.candidates;
+    if (candidates && candidates.length > 0) {
+      for (const part of candidates[0].content.parts) {
+        if (part.inlineData) {
+          const base64EncodeString: string = part.inlineData.data;
+          return `data:image/png;base64,${base64EncodeString}`;
+        } else if (part.text) {
+          console.debug("Model returned text instead of image:", part.text);
+        }
       }
     }
     
